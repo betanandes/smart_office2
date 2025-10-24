@@ -1,0 +1,86 @@
+<!-- <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameX Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <h1>🎮 GameX</h1>
+        <ul>
+            <li class="active" onclick="loadModule('dashboard')">📊 Dashboard</li>
+            <li class="active" onclick="loadModule('monitoramento')">⚡ Monitoramento</li>
+            <li class="active" onclick="loadModule('insights')">💡 Insights</li>
+            <li class="active" onclick="loadModule('relatorios')">🧠 Relatórios</li>
+        </ul>
+        <p class="footer">GameX © 2025</p>
+    </div>
+
+    <div class="main-content" id="content">
+        O conteúdo dos módulos será carregado aqui
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>GameX Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>🎮 GameX</h2>
+    <nav>
+      <a onclick="mostrar('dashboard')" class="active">📊 Dashboard</a>
+      <a onclick="mostrar('monitoramento')">⚡ Monitoramento</a>
+      <a onclick="mostrar('insights')">💡 Insights</a>
+      <a onclick="mostrar('relatorios')">🧠 Relatórios</a>
+    </nav>
+    <footer>GameX © 2025</footer>
+  </aside>
+
+  <main>
+    <section id="dashboard" class="modulo ativo">
+      <h1>📊 Dashboard</h1>
+      <div class="cards">
+        <div class="card"><h3>Acessos</h3><p id="acessos">--</p></div>
+        <div class="card"><h3>Faturamento (R$)</h3><p id="faturamento">--</p></div>
+        <div class="card"><h3>Jogos Inseridos</h3><p id="jogos">--</p></div>
+      </div>
+      <canvas id="grafico"></canvas>
+    </section>
+
+    <section id="monitoramento" class="modulo">
+      <h1>⚡ Monitoramento em Tempo Real</h1>
+      <p>Usuários Online: <b id="usuariosOnline">--</b></p>
+      <p>Vendas do Dia: <b id="vendasDia">--</b></p>
+      <p>Novos Jogos: <b id="novosJogos">--</b></p>
+    </section>
+
+    <section id="insights" class="modulo">
+      <h1>💡 Insights e Tendências</h1>
+      <ul id="listaInsights"></ul>
+      <h3>KPIs</h3>
+      <p>Retenção: <span id="retencao"></span></p>
+      <p>Satisfação: <span id="satisfacao"></span></p>
+      <p>Tempo Médio: <span id="tempoMedio"></span></p>
+    </section>
+
+    <section id="relatorios" class="modulo">
+      <h1>🧠 Relatórios Inteligentes com IA</h1>
+      <button onclick="gerarRelatorio()">Gerar Relatório</button>
+      <pre id="textoRelatorio"></pre>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

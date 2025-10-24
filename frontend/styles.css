@@ -1,0 +1,79 @@
+body {
+  margin: 0;
+  display: flex;
+  font-family: "Inter", sans-serif;
+  background-color: #10002d;
+  color: white;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #4b1664;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar h2 {
+  color: #ff00ff;
+  text-align: center;
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  margin: 0.5rem 0;
+  padding: 0.7rem 1rem;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.sidebar a.active,
+.sidebar a:hover {
+  background-color: #976acf;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.cards {
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  flex: 1;
+  background: #4b1664;
+  border-radius: 15px;
+  text-align: center;
+  padding: 1rem;
+}
+
+button {
+  background-color: #976acf;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: #ff00ff;
+}
+
+pre {
+  background: #4b1664;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-top: 1rem;
+  white-space: pre-wrap;
+}
+
+.modulo { display: none; }
+.modulo.ativo { display: block; }
