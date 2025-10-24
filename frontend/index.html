@@ -15,10 +15,18 @@
         <div class="sidebar-content">
             <h2>GameX</h2>
             <nav>
-                <a onclick="mostrar('dashboard', this)" class="active"> Dashboard</a> 
-                <a onclick="mostrar('monitoramento', this)"> Monitoramento</a>
-                <a onclick="mostrar('insights', this)"> Insights</a>
-                <a onclick="mostrar('relatorios', this)"> Relatórios</a>
+                <a onclick="mostrar('dashboard', this)" class="active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a> 
+                <a onclick="mostrar('monitoramento', this)">
+                    <i class="fas fa-wifi"></i> Monitoramento
+                </a>
+                <a onclick="mostrar('insights', this)">
+                    <i class="fas fa-lightbulb"></i> Insights
+                </a>
+                <a onclick="mostrar('relatorios', this)">
+                    <i class="fas fa-file-invoice"></i> Relatórios
+                </a>
             </nav>
             <div class="sidebar-footer">
               <span class="footer-line">Projeto Final</span>
@@ -32,23 +40,23 @@
         <section id="dashboard" class="modulo ativo">
             <h1>Dashboard de Métricas e Riscos</h1>
 
-            <div class="dashboard-cards-grid">
-                <div class="card-metricas">
-                    <h3>Acessos Total</h3>
-                    <p id="acessos" class="valor-metrica">--</p>
-                    <span class="descricao-metrica">Desde o início da plataforma</span>
-                </div>
-                <div class="card-metricas">
-                    <h3>Faturamento (R$)</h3>
-                    <p id="faturamento" class="valor-metrica">--</p>
-                    <span class="descricao-metrica">Total acumulado</span>
-                </div>
-                <div class="card-metricas">
-                    <h3>Jogos Inseridos</h3>
-                    <p id="jogos" class="valor-metrica">--</p>
-                    <span class="descricao-metrica">Novos títulos adicionados</span>
-                </div>
+        <div class="dashboard-cards-grid">
+            <div class="card-metricas">
+                <h3><span class="card-icon-wrapper"><i class="fas fa-users"></i></span> Acessos Total</h3>
+                <p id="acessos" class="valor-metrica">--</p>
+                <span class="descricao-metrica">Desde o início da plataforma</span>
             </div>
+            <div class="card-metricas">
+                <h3><span class="card-icon-wrapper"><i class="fas fa-dollar-sign"></i></span> Faturamento (R$)</h3>
+                <p id="faturamento" class="valor-metrica">--</p>
+                <span class="descricao-metrica">Total acumulado</span>
+            </div>
+            <div class="card-metricas">
+                <h3><span class="card-icon-wrapper"><i class="fas fa-gamepad"></i></span> Jogos Inseridos</h3>
+                <p id="jogos" class="valor-metrica">--</p>
+                <span class="descricao-metrica">Novos títulos adicionados</span>
+            </div>
+        </div>
 
             <div class="dashboard-grid-inferior">
 
@@ -93,20 +101,20 @@
                 </div>
 
 
-                <div class="metricas-card">
-                    <div class="kpi-monitoramento">
-                        <h3>Usuários Online</h3>
-                        <p id="usuariosOnline" class="kpi-valor-m">--</p>
-                    </div>
-                    <div class="kpi-monitoramento">
-                        <h3>Vendas do Dia</h3>
-                        <p id="vendasDia" class="kpi-valor-m">--</p>
-                    </div>
-                    <div class="kpi-monitoramento">
-                        <h3>Novos Jogos</h3>
-                        <p id="novosJogos" class="kpi-valor-m">--</p>
-                    </div>
-                </div>
+              <div class="metricas-card">
+                  <div class="kpi-monitoramento">
+                      <h3><i class="fas fa-globe"></i> Usuários Online</h3>
+                      <p id="usuariosOnline" class="kpi-valor-m">--</p>
+                  </div>
+                  <div class="kpi-monitoramento">
+                      <h3><i class="fas fa-shopping-cart"></i> Vendas do Dia</h3>
+                      <p id="vendasDia" class="kpi-valor-m">--</p>
+                  </div>
+                  <div class="kpi-monitoramento">
+                      <h3><i class="fas fa-plus-circle"></i> Novos Jogos</h3>
+                      <p id="novosJogos" class="kpi-valor-m">--</p>
+                  </div>
+              </div>
             </div>
         </section>
 
@@ -115,20 +123,20 @@
             <h1>Insights e Tendências</h1>
 
 
-            <div class="cards-kpi">
-                <div class="kpi-card">
-                    <h3>Retenção</h3>
-                    <p class="kpi-valor" id="retencao">--</p>
-                </div>
-                <div class="kpi-card">
-                    <h3>Satisfação</h3>
-                    <p class="kpi-valor" id="satisfacao">--</p>
-                </div>
-                <div class="kpi-card">
-                    <h3>Tempo Médio</h3>
-                    <p class="kpi-valor" id="tempoMedio">--</p>
-                </div>
+        <div class="cards-kpi">
+            <div class="kpi-card">
+                <h3><i class="fas fa-redo-alt"></i> Retenção</h3>
+                <p class="kpi-valor" id="retencao">--</p>
             </div>
+            <div class="kpi-card">
+                <h3><i class="fas fa-star"></i> Satisfação</h3>
+                <p class="kpi-valor" id="satisfacao">--</p>
+            </div>
+            <div class="kpi-card">
+                <h3><i class="fas fa-clock"></i> Tempo Médio</h3>
+                <p class="kpi-valor" id="tempoMedio">--</p>
+            </div>
+        </div>
 
 
             <h2>Tendências Chave</h2>

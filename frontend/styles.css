@@ -195,6 +195,40 @@ h2 {
 }
 
 /* ---------------------------------- */
+/* 🌟 NOVO: ESTILIZAÇÃO DE ÍCONES NOS CARDS DE MÉTRICAS 🌟 */
+/* ---------------------------------- */
+
+.card-metricas h3 {
+    display: flex; /* Permite alinhar o ícone e o texto */
+    align-items: center;
+    justify-content: center; /* Centraliza todo o cabeçalho (ícone + texto) */
+    gap: 8px; /* Espaço entre o ícone e o texto */
+    /* ... outras propriedades de h3 ... */
+}
+
+/* Estilo para o ícone (cor e tamanho) */
+.card-metricas h3 i {
+    color: var(--cor-destaque); /* Cor do ícone (Magenta Brilhante) */
+    font-size: 1.1rem;
+}
+
+/* Garante que o ícone fique antes do texto, se necessário (já feito no HTML com o span) */
+.card-icon-wrapper {
+    display: flex;
+    align-items: center;
+    /* Opcional: Adicionar um círculo de fundo sutil ao redor do ícone */
+    /* background: rgba(255, 0, 255, 0.1); 
+    border-radius: 50%;
+    padding: 5px; */
+}
+
+/* Estilização dos Ícones nas Métricas de Monitoramento e Insights */
+.kpi-monitoramento h3 i, .kpi-card h3 i {
+    margin-right: 8px; /* Espaço entre o ícone e o texto */
+    color: var(--cor-destaque);
+}
+
+/* ---------------------------------- */
 /* 🆕 NOVO: GRID INFERIOR (Gráfico + Tabela) */
 /* ---------------------------------- */
 
