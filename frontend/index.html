@@ -2,172 +2,665 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameX Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Carrega o Tailwind CSS para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-dark': '#10061A', // Fundo principal escuro, quase preto
+                        'secondary-dark': '#1E0B2B', // Elementos de fundo secundários
+                        'accent': '#9333ea', // Roxo vibrante para destaque (purple-600)
+                        'accent-light': '#a855f7', // Roxo mais claro (purple-500)
+                        'metric-success': '#10b981', // Verde para sucesso/positivo (emerald-500)
+                        'metric-danger': '#ef4444', // Vermelho para risco/negativo (red-500)
+                        'metric-warning': '#f59e0b', // Amarelo para atenção (amber-500)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Fonte Inter e Font Awesome para ícones -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos personalizados para a Sidebar e transições */
+        /* A Sidebar agora usa position: fixed em telas maiores (md:) */
+        .sidebar {
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+            min-height: 100vh;
+        }
+        
+        /* Mobile: Sidebar continua se movendo, fixo com transform: translateX */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                z-index: 50;
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .menu-toggle {
+                display: block; /* Mostra o botão de menu no mobile */
+            }
+        }
+
+        /* Estilo para a barra de scroll */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #9333ea;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e0b2b;
+        }
+    </style>
 </head>
-<body>
-    <aside class="sidebar">
-        <button class="menu-toggle" aria-label="Abrir Menu">☰</button> 
-        <div class="sidebar-content">
-            <h2>GameX</h2>
-            <nav>
-                <a onclick="mostrar('dashboard', this)" class="active">
-                    <i class="fas fa-chart-line"></i> Dashboard
-                </a> 
-                <a onclick="mostrar('monitoramento', this)">
-                    <i class="fas fa-wifi"></i> Monitoramento
-                </a>
-                <a onclick="mostrar('insights', this)">
-                    <i class="fas fa-lightbulb"></i> Insights
-                </a>
-                <a onclick="mostrar('relatorios', this)">
-                    <i class="fas fa-file-invoice"></i> Relatórios
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-              <span class="footer-line">Projeto Final</span>
-              <span class="footer-line">Gerência de Projetos 4.0</span>
-              <span class="footer-line">Análise e Desenv. de Sistemas</span>
-          </div>
+<!-- Aplicamos a classe 'flex' e 'min-h-screen' no body para o layout base -->
+<body class="bg-primary-dark text-gray-100 font-sans flex min-h-screen">
+
+    <!-- Sidebar (Menu Lateral) - Adicionamos 'md:sidebar-fixed' para fixar em desktop -->
+    <aside id="sidebar" class="sidebar w-64 bg-secondary-dark p-6 shadow-2xl md:shadow-none flex-shrink-0 md:fixed md:top-0 md:left-0 md:h-screen">
+        <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center">
+                <!-- Ícone GameX Logo -->
+                <svg class="w-8 h-8 text-accent-light mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+                <h2 class="text-2xl font-extrabold text-white">GameX</h2>
+            </div>
+            <!-- Botão de fechar/abrir no mobile -->
+            <button id="close-menu" class="text-gray-400 hover:text-white md:hidden" aria-label="Fechar Menu" style="display: none;">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <nav class="space-y-2">
+            <!-- Os links da navegação agora usam classes Tailwind para estilo e hover state -->
+            <a onclick="mostrar('dashboard', this)" class="menu-item active flex items-center p-3 rounded-xl cursor-pointer transition duration-200 bg-accent/20 text-accent font-semibold hover:bg-accent/30">
+                <i class="fas fa-chart-line w-5 mr-3"></i> Dashboard
+            </a>
+            <a onclick="mostrar('monitoramento', this)" class="menu-item flex items-center p-3 rounded-xl cursor-pointer transition duration-200 text-gray-300 hover:bg-accent/10 hover:text-accent">
+                <i class="fas fa-wifi w-5 mr-3"></i> Monitoramento
+            </a>
+            <a onclick="mostrar('insights', this)" class="menu-item flex items-center p-3 rounded-xl cursor-pointer transition duration-200 text-gray-300 hover:bg-accent/10 hover:text-accent">
+                <i class="fas fa-lightbulb w-5 mr-3"></i> Insights
+            </a>
+            <a onclick="mostrar('relatorios', this)" class="menu-item flex items-center p-3 rounded-xl cursor-pointer transition duration-200 text-gray-300 hover:bg-accent/10 hover:text-accent">
+                <i class="fas fa-file-invoice w-5 mr-3"></i> Relatórios
+            </a>
+        </nav>
+
+        <div class="mt-auto pt-8 text-xs text-gray-400 border-t border-gray-700/50 absolute bottom-6 w-52">
+            <p class="font-bold text-gray-300 mb-1">Projeto Final</p>
+            <p>Gerência de Projetos 4.0</p>
+            <p>Análise e Desenv. de Sistemas</p>
         </div>
     </aside>
 
-    <main id="main-content">
-        <section id="dashboard" class="modulo ativo">
-            <h1>Dashboard de Métricas e Riscos</h1>
+    <!-- Conteúdo Principal - Adicionamos 'md:main-content-shifted' para compensar o sidebar fixo -->
+    <main id="main-content" class="flex-grow p-6 md:p-10 relative md:ml-64">
+        <!-- Botão de Menu para Mobile -->
+        <button id="menu-toggle" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-accent rounded-full shadow-lg text-white hover:bg-accent-light transition duration-200" aria-label="Abrir Menu">
+            <i class="fas fa-bars"></i>
+        </button>
 
-        <div class="dashboard-cards-grid">
-            <div class="card-metricas">
-                <h3><span class="card-icon-wrapper"><i class="fas fa-users"></i></span> Acessos Total</h3>
-                <p id="acessos" class="valor-metrica">--</p>
-                <span class="descricao-metrica">Desde o início da plataforma</span>
-            </div>
-            <div class="card-metricas">
-                <h3><span class="card-icon-wrapper"><i class="fas fa-dollar-sign"></i></span> Faturamento (R$)</h3>
-                <p id="faturamento" class="valor-metrica">--</p>
-                <span class="descricao-metrica">Total acumulado</span>
-            </div>
-            <div class="card-metricas">
-                <h3><span class="card-icon-wrapper"><i class="fas fa-gamepad"></i></span> Jogos Inseridos</h3>
-                <p id="jogos" class="valor-metrica">--</p>
-                <span class="descricao-metrica">Novos títulos adicionados</span>
-            </div>
-        </div>
+        <!-- DASHBOARD (Módulo 1) -->
+        <section id="dashboard" class="modulo active space-y-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white border-b-2 border-accent pb-2">Dashboard de Métricas e Riscos</h1>
 
-            <div class="dashboard-grid-inferior">
+            <!-- Grid de Métricas Chave -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card de Métrica: Acessos Total -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center">
+                        <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-users"></i></span> Acessos Total
+                    </h3>
+                    <p id="acessos" class="valor-metrica text-5xl font-extrabold mt-3 text-accent-light">120.000</p>
+                    <span class="text-sm text-gray-400 mt-1 block">Desde o início da plataforma</span>
+                </div>
+                <!-- Card de Métrica: Faturamento -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center">
+                        <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-dollar-sign"></i></span> Faturamento (R$)
+                    </h3>
+                    <p id="faturamento" class="valor-metrica text-5xl font-extrabold mt-3 text-metric-success">R$ 450.000,75</p>
+                    <span class="text-sm text-gray-400 mt-1 block">Total acumulado</span>
+                </div>
+                <!-- Card de Métrica: Jogos Inseridos -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center">
+                        <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-gamepad"></i></span> Jogos Inseridos
+                    </h3>
+                    <p id="jogos" class="valor-metrica text-5xl font-extrabold mt-3 text-white">350</p>
+                    <span class="text-sm text-gray-400 mt-1 block">Novos títulos adicionados</span>
+                </div>
+            </div>
 
-                <div class="bloco-grafico">
-                    <h2>Comparativo de Métricas Chave (Acessos, Faturamento, Jogos)</h2>
-                    <div class="grafico-dashboard-container">
-                        <canvas id="graficoDashboardMundoReal"></canvas> 
+            <!-- Grid Inferior (Gráfico + Tabela de Riscos) -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Gráfico de Comparativo (2/3 da largura em desktop) -->
+                <div class="lg:col-span-2 p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h2 class="text-xl font-bold mb-4 text-white">Comparativo de Métricas Chave</h2>
+                    <div class="h-80 w-full">
+                        <canvas id="graficoDashboardMundoReal"></canvas>
                     </div>
                 </div>
-                
-                <div class="bloco-riscos">
-                    <h2>Análise de Risco Operacional Baseada em Dados</h2>
-                    <div class="tabela-riscos-container">
-                        <table class="tabela-riscos">
-                            <thead>
+
+                <!-- Tabela de Riscos (1/3 da largura em desktop) -->
+                <div class="lg:col-span-1 p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30 overflow-auto">
+                    <h2 class="text-xl font-bold mb-4 text-white">Análise de Risco Operacional</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs uppercase bg-accent/10 text-accent">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Risco</th>
-                                    <th>Probabilidade</th>
-                                    <th>Impacto</th>
-                                    <th>Ação de Mitigação</th>
+                                    <th scope="col" class="px-3 py-3 rounded-tl-lg">ID</th>
+                                    <th scope="col" class="px-3 py-3">Risco</th>
+                                    <th scope="col" class="px-3 py-3">Prob.</th>
+                                    <th scope="col" class="px-3 py-3">Imp.</th>
+                                    <th scope="col" class="px-3 py-3 rounded-tr-lg">Mitigação</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabelaRiscosBody">
-                                </tbody>
+                            <tbody id="tabelaRiscosBody" class="text-gray-300 divide-y divide-gray-700/50">
+                                <!-- Dados preenchidos via JS -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
         </section>
 
+        <!-- MONITORAMENTO (Módulo 2) -->
+        <section id="monitoramento" class="modulo hidden space-y-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white border-b-2 border-accent pb-2">Monitoramento em Tempo Real</h1>
 
-        <section id="monitoramento" class="modulo">
-            <h1>Monitoramento em Tempo Real</h1>
-            <div class="monitoramento-container">
-                <div class="grafico-card">
-                    <h2>Atividade da Plataforma (última hora)</h2>
-                    <div class="chart-area">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Gráfico de Atividade (Maior) -->
+                <div class="lg:col-span-2 p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h2 class="text-xl font-bold mb-4 text-white">Atividade da Plataforma (última hora)</h2>
+                    <div class="h-80 w-full">
                         <canvas id="graficoMonitoramento"></canvas>
                     </div>
                 </div>
 
-
-              <div class="metricas-card">
-                  <div class="kpi-monitoramento">
-                      <h3><i class="fas fa-globe"></i> Usuários Online</h3>
-                      <p id="usuariosOnline" class="kpi-valor-m">--</p>
-                  </div>
-                  <div class="kpi-monitoramento">
-                      <h3><i class="fas fa-shopping-cart"></i> Vendas do Dia</h3>
-                      <p id="vendasDia" class="kpi-valor-m">--</p>
-                  </div>
-                  <div class="kpi-monitoramento">
-                      <h3><i class="fas fa-plus-circle"></i> Novos Jogos</h3>
-                      <p id="novosJogos" class="kpi-valor-m">--</p>
-                  </div>
-              </div>
+                <!-- KPIs em Tempo Real (Menor) -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-xl font-bold text-white">Tempo Real</h3>
+                            <p class="text-sm text-gray-400">BR: <span id="horarioBrasilia" class="font-mono text-accent-light">--:--:--</span></p>
+                        </div>
+                        <div class="space-y-4">
+                             <!-- KPI Usuários Online -->
+                            <div class="flex items-center justify-between p-3 bg-primary-dark rounded-lg">
+                                <span class="text-lg font-semibold text-gray-300 flex items-center"><i class="fas fa-globe mr-2 text-accent"></i> Usuários Online</span>
+                                <p id="usuariosOnline" class="kpi-valor-m text-3xl font-extrabold text-accent-light">1.123</p>
+                            </div>
+                            <!-- KPI Vendas do Dia -->
+                            <div class="flex items-center justify-between p-3 bg-primary-dark rounded-lg">
+                                <span class="text-lg font-semibold text-gray-300 flex items-center"><i class="fas fa-shopping-cart mr-2 text-metric-success"></i> Vendas do Dia</span>
+                                <p id="vendasDia" class="kpi-valor-m text-3xl font-extrabold text-metric-success">42</p>
+                            </div>
+                            <!-- KPI Novos Jogos -->
+                            <div class="flex items-center justify-between p-3 bg-primary-dark rounded-lg">
+                                <span class="text-lg font-semibold text-gray-300 flex items-center"><i class="fas fa-plus-circle mr-2 text-white"></i> Novos Jogos</span>
+                                <p id="novosJogos" class="kpi-valor-m text-3xl font-extrabold text-white">30</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
 
-        <section id="insights" class="modulo">
-            <h1>Insights e Tendências</h1>
+        <!-- INSIGHTS (Módulo 3) -->
+        <section id="insights" class="modulo hidden space-y-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white border-b-2 border-accent pb-2">Insights e Tendências</h1>
 
-
-        <div class="cards-kpi">
-            <div class="kpi-card">
-                <h3><i class="fas fa-redo-alt"></i> Retenção</h3>
-                <p class="kpi-valor" id="retencao">--</p>
+            <!-- Cards de KPI -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <!-- Retenção -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg text-center border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center justify-center mb-2">
+                        <i class="fas fa-redo-alt mr-2 text-accent"></i> Retenção
+                    </h3>
+                    <p class="kpi-valor text-6xl font-extrabold text-accent-light" id="retencao">0.95</p>
+                </div>
+                <!-- Satisfação -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg text-center border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center justify-center mb-2">
+                        <i class="fas fa-star mr-2 text-metric-success"></i> Satisfação
+                    </h3>
+                    <p class="kpi-valor text-6xl font-extrabold text-metric-success" id="satisfacao">4.86</p>
+                </div>
+                <!-- Tempo Médio -->
+                <div class="p-6 bg-secondary-dark rounded-xl shadow-lg text-center border border-accent/30">
+                    <h3 class="text-lg font-semibold text-gray-300 flex items-center justify-center mb-2">
+                        <i class="fas fa-clock mr-2 text-metric-warning"></i> Tempo Médio
+                    </h3>
+                    <!-- ID para atualizar o tempo médio -->
+                    <p class="kpi-valor text-6xl font-extrabold text-metric-warning" id="tempoMedio">18min</p>
+                </div>
             </div>
-            <div class="kpi-card">
-                <h3><i class="fas fa-star"></i> Satisfação</h3>
-                <p class="kpi-valor" id="satisfacao">--</p>
-            </div>
-            <div class="kpi-card">
-                <h3><i class="fas fa-clock"></i> Tempo Médio</h3>
-                <p class="kpi-valor" id="tempoMedio">--</p>
-            </div>
-        </div>
 
-
-            <h2>Tendências Chave</h2>
-            <ul id="listaInsights" class="insights-lista"></ul>
+            <!-- Lista de Insights/Tendências -->
+            <h2 class="text-2xl font-bold text-white mt-8 mb-4">Tendências Chave</h2>
+            <ul id="listaInsights" class="insights-lista space-y-4">
+                <!-- Itens preenchidos via JS -->
+            </ul>
         </section>
 
 
-        <section id="relatorios" class="modulo">
-            <h1>Relatórios Inteligentes com IA</h1>
+        <!-- RELATÓRIOS (Módulo 4) -->
+        <section id="relatorios" class="modulo hidden space-y-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white border-b-2 border-accent pb-2">Relatórios Inteligentes com IA</h1>
 
-            <div class="relatorio-cards">
-
-                <div class="relatorio-card">
-                    <h3>Gerador de Relatório de Status</h3>
-                    <p>Clique no botão para usar a IA Generativa e criar um relatório de status executivo com base nos dados atuais da GameX.</p>
-                    <button onclick="gerarRelatorio('status')">Gerar Relatório</button>
-                    <pre id="textoRelatorioStatus" class="resultado-relatorio"></pre>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Card Gerador de Relatório de Status -->
+                <div class="relatorio-card p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h3 class="text-2xl font-bold text-accent-light mb-3">Gerador de Relatório de Status</h3>
+                    <p class="text-gray-300 mb-4">Clique no botão para usar a IA Generativa e criar um relatório de status executivo com base nos dados atuais da GameX.</p>
+                    <button onclick="gerarRelatorio('status')" class="px-6 py-3 bg-accent hover:bg-accent-light text-white font-semibold rounded-lg transition duration-200 shadow-md shadow-accent/50">
+                        <i class="fas fa-robot mr-2"></i> Gerar Relatório
+                    </button>
+                    <!-- Área de resultado -->
+                    <pre id="textoRelatorioStatus" class="resultado-relatorio mt-5 p-4 bg-primary-dark border border-gray-700 rounded-lg whitespace-pre-wrap text-sm text-gray-200 min-h-[100px] flex items-center justify-center">Nenhum relatório gerado ainda.</pre>
                 </div>
 
-
-                <div class="relatorio-card">
-                    <h3>Gerador de Lições Aprendidas</h3>
-                    <p>Use a IA para compilar e analisar as lições aprendidas e riscos atuais para aprimorar processos futuros.</p>
-                    <button onclick="gerarRelatorio('licoes')">Gerar Lições Aprendidas</button>
-                    <pre id="textoRelatorioLicoes" class="resultado-relatorio"></pre>
+                <!-- Card Gerador de Lições Aprendidas -->
+                <div class="relatorio-card p-6 bg-secondary-dark rounded-xl shadow-lg border border-accent/30">
+                    <h3 class="text-2xl font-bold text-accent-light mb-3">Gerador de Lições Aprendidas</h3>
+                    <p class="text-gray-300 mb-4">Use a IA para compilar e analisar as lições aprendidas e riscos atuais para aprimorar processos futuros.</p>
+                    <button onclick="gerarRelatorio('licoes')" class="px-6 py-3 bg-accent hover:bg-accent-light text-white font-semibold rounded-lg transition duration-200 shadow-md shadow-accent/50">
+                        <i class="fas fa-brain mr-2"></i> Gerar Lições Aprendidas
+                    </button>
+                    <!-- Área de resultado -->
+                    <pre id="textoRelatorioLicoes" class="resultado-relatorio mt-5 p-4 bg-primary-dark border border-gray-700 rounded-lg whitespace-pre-wrap text-sm text-gray-200 min-h-[100px] flex items-center justify-center">Nenhuma lição aprendida gerada ainda.</pre>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Adiciona o Chart.js aqui para garantir que ele seja carregado antes do seu script. -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Variáveis globais para os gráficos
+        let graficoDashboard;
+        let graficoMonitoramento;
+        
+        // Dados Mock para População Inicial - TEMPO MÉDIO ADICIONADO AQUI
+        const mockData = {
+            dashboard: {
+                acessos: "120.000",
+                faturamento: "R$ 450.000,75",
+                jogos: "350",
+                riscos: [
+                    { id: 'R-01', risco: 'Instabilidade no servidor', prob: 'Alta', impacto: 'Alto', mitigacao: 'Monitoramento proativo e planos de contingência.', classProb: 'bg-metric-danger', classImp: 'text-metric-danger' },
+                    { id: 'R-02', risco: 'Baixa taxa de conversão', prob: 'Baixa', impacto: 'Médio', mitigacao: 'A/B testing e otimização de funil.', classProb: 'bg-metric-success', classImp: 'text-metric-warning' },
+                    { id: 'R-03', risco: 'Concorrência acirrada', prob: 'Média', impacto: 'Alto', mitigacao: 'Inovação contínua e pesquisa de mercado.', classProb: 'bg-metric-warning', classImp: 'text-metric-danger' },
+                ]
+            },
+            monitoramento: {
+                online: "1.123",
+                vendas: "120",
+                novos: "30",
+            },
+            insights: {
+                retencao: "0.95", 
+                satisfacao: "4.86", 
+                tempoMedio: "18min", // NOVO VALOR ADICIONADO AQUI
+                lista: [
+                    "Jogos indie com estética retrô estão em alta.",
+                    "Promoções aumentam engajamento em 35%.",
+                    "Jogos multiplayer mantêm usuários ativos por mais tempo.",
+                ]
+            }
+        };
 
-    <script src="script.js"></script>
+        // Função principal de inicialização
+        window.onload = function() {
+            // 1. Populando dados Mock
+            popularDadosMock();
+            
+            // 2. Inicializando Gráficos
+            inicializarGraficos();
+
+            // 3. Inicializando funcionalidades do Dashboard
+            inicializarDashboard();
+        };
+
+        // --- Configurações da UI e Navegação ---
+
+        function inicializarDashboard() {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const closeMenu = document.getElementById('close-menu');
+
+            // Toggle para Mobile
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+                menuToggle.style.display = 'none'; // Esconde o botão do menu quando aberto
+                closeMenu.style.display = 'block'; // Mostra o botão de fechar
+            });
+
+            closeMenu.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                menuToggle.style.display = 'block'; // Mostra o botão do menu quando fechado
+                closeMenu.style.display = 'none'; // Esconde o botão de fechar
+            });
+            
+            // Fecha a sidebar ao clicar em um item no mobile
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('active');
+                        menuToggle.style.display = 'block';
+                        closeMenu.style.display = 'none';
+                    }
+                });
+            });
+
+            // Atualização do Relógio (a cada 1s)
+            setInterval(atualizarHorario, 1000);
+            atualizarHorario(); // Chama a primeira vez imediatamente
+            
+            // NOVO: Atualização do Gráfico de Monitoramento (a cada 2s)
+            setInterval(atualizarGraficoMonitoramento, 2000);
+        }
+        
+        // Função de navegação entre módulos
+        function mostrar(id, elemento) {
+            // Esconde todos os módulos
+            document.querySelectorAll('.modulo').forEach(mod => mod.classList.add('hidden'));
+            // Mostra o módulo selecionado
+            document.getElementById(id).classList.remove('hidden');
+
+            // Remove a classe 'active' de todos os itens do menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('bg-accent/20', 'text-accent', 'font-semibold');
+                item.classList.add('text-gray-300', 'hover:bg-accent/10', 'hover:text-accent');
+            });
+
+            // Adiciona a classe 'active' ao item clicado
+            elemento.classList.add('bg-accent/20', 'text-accent', 'font-semibold');
+            elemento.classList.remove('text-gray-300', 'hover:bg-accent/10', 'hover:text-accent');
+        }
+
+        function atualizarHorario() {
+            const data = new Date();
+            const options = { 
+                timeZone: 'America/Sao_Paulo', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            };
+            const horarioFormatado = data.toLocaleTimeString('pt-BR', options);
+            document.getElementById('horarioBrasilia').textContent = horarioFormatado;
+        }
+
+        // --- População de Dados Mock ---
+
+        function popularDadosMock() {
+            // Dashboard Métricas
+            document.getElementById('acessos').textContent = mockData.dashboard.acessos;
+            document.getElementById('faturamento').textContent = mockData.dashboard.faturamento;
+            document.getElementById('jogos').textContent = mockData.dashboard.jogos;
+
+            // Dashboard Riscos
+            const tabelaRiscosBody = document.getElementById('tabelaRiscosBody');
+            tabelaRiscosBody.innerHTML = ''; // Limpa a tabela
+            mockData.dashboard.riscos.forEach(risco => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-accent/10 transition duration-150';
+                row.innerHTML = `
+                    <td class="px-3 py-3 font-medium whitespace-nowrap">${risco.id}</td>
+                    <td class="px-3 py-3">${risco.risco}</td>
+                    <td class="px-3 py-3">
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full text-white ${risco.classProb}">${risco.prob}</span>
+                    </td>
+                    <td class="px-3 py-3 font-semibold ${risco.classImp}">${risco.impacto}</td>
+                    <td class="px-3 py-3 max-w-[150px] text-xs text-gray-400">${risco.mitigacao}</td>
+                `;
+                tabelaRiscosBody.appendChild(row);
+            });
+
+            // Monitoramento KPIs
+            document.getElementById('usuariosOnline').textContent = mockData.monitoramento.online;
+            document.getElementById('vendasDia').textContent = mockData.monitoramento.vendas;
+            document.getElementById('novosJogos').textContent = mockData.monitoramento.novos;
+
+            // Insights KPIs (Valores atualizados)
+            document.getElementById('retencao').textContent = mockData.insights.retencao;
+            document.getElementById('satisfacao').textContent = mockData.insights.satisfacao;
+            document.getElementById('tempoMedio').textContent = mockData.insights.tempoMedio; // Atualizado
+
+            // Insights Lista
+            const listaInsights = document.getElementById('listaInsights');
+            listaInsights.innerHTML = ''; // Limpa a lista
+            mockData.insights.lista.forEach(insight => {
+                const li = document.createElement('li');
+                li.className = 'p-4 bg-secondary-dark border-l-4 border-accent rounded-lg shadow-md flex items-start';
+                li.innerHTML = `
+                    <i class="fas fa-lightbulb text-accent text-xl mr-3 mt-1 flex-shrink-0"></i>
+                    <p class="text-gray-300">${insight}</p>
+                `;
+                listaInsights.appendChild(li);
+            });
+        }
+        
+        // Função para obter o horário atual em formato de rótulo para o eixo X (Min:Seg) - BRT
+        function obterRotuloHorarioBrasilia() {
+            const data = new Date();
+            // Apenas minuto e segundo
+            const options = { 
+                timeZone: 'America/Sao_Paulo', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            };
+            return data.toLocaleTimeString('pt-BR', options);
+        }
+
+        // Função para simular a atualização em tempo real do gráfico de monitoramento
+        function atualizarGraficoMonitoramento() {
+            if (!graficoMonitoramento) return;
+
+            // 1. Geração de um novo ponto de dado simulado (entre 950 e 1150 acessos/min)
+            const novoAcesso = Math.floor(Math.random() * (1150 - 950 + 1)) + 950;
+            const novoRotulo = obterRotuloHorarioBrasilia();
+
+            // 2. Adicionar novo dado e rótulo
+            graficoMonitoramento.data.labels.push(novoRotulo);
+            graficoMonitoramento.data.datasets[0].data.push(novoAcesso);
+
+            // 3. Remover o dado mais antigo para manter o gráfico com 7 pontos (janela deslizante)
+            const limitePontos = 7;
+            if (graficoMonitoramento.data.labels.length > limitePontos) {
+                graficoMonitoramento.data.labels.shift();
+                graficoMonitoramento.data.datasets[0].data.shift();
+            }
+
+            // 4. Atualizar o gráfico na tela
+            graficoMonitoramento.update();
+        }
+
+
+        // --- Configuração dos Gráficos Chart.js ---
+
+        function inicializarGraficos() {
+            // Gráfico 1: Dashboard - Comparativo de Métricas Chave
+            const ctxDashboard = document.getElementById('graficoDashboardMundoReal').getContext('2d');
+            graficoDashboard = new Chart(ctxDashboard, {
+                type: 'line',
+                data: {
+                    labels: ['Acessos (milhares)', 'Faturamento (x10k R$)', 'Jogos Inseridos'],
+                    datasets: [{
+                        label: 'Métricas em Escalas Comparáveis',
+                        data: [120, 45, 350], // Dados de exemplo
+                        backgroundColor: 'rgba(147, 51, 234, 0.4)', // Cor de fundo do preenchimento
+                        borderColor: '#9333ea', // Cor da linha (accent)
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointBackgroundColor: '#fff',
+                        tension: 0.4, // Suaviza as linhas
+                        fill: 'origin' // Preenche a área abaixo da linha
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: 'rgb(209, 213, 219)' // Cor do texto da legenda (gray-300)
+                            }
+                        },
+                        tooltip: {
+                             backgroundColor: '#1E0B2B',
+                             titleColor: '#fff',
+                             bodyColor: '#fff',
+                             borderColor: '#9333ea',
+                             borderWidth: 1,
+                             cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Valores Escalados',
+                                color: 'rgb(156, 163, 175)' // Cor do título (gray-400)
+                            },
+                            ticks: {
+                                color: 'rgb(156, 163, 175)' // Cor dos valores do eixo
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)', // Cor das linhas de grade
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: 'rgb(156, 163, 175)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico 2: Monitoramento - Atividade da Plataforma (Área Chart)
+            const ctxMonitoramento = document.getElementById('graficoMonitoramento').getContext('2d');
+            // Inicializa o gráfico com 7 pontos. Os rótulos serão atualizados em tempo real pela função.
+            const labelsIniciais = Array(7).fill('').map(() => '...'); 
+            const dadosIniciais = [1000, 1025, 1010, 1120, 1050, 1070, 1030]; // Dados mock iniciais
+            
+            graficoMonitoramento = new Chart(ctxMonitoramento, {
+                type: 'line',
+                data: {
+                    labels: labelsIniciais,
+                    datasets: [{
+                        label: 'Atividade (Acessos/min)',
+                        data: dadosIniciais,
+                        backgroundColor: 'rgba(147, 51, 234, 0.4)',
+                        borderColor: '#a855f7',
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: '#fff',
+                        tension: 0.4,
+                        fill: 'origin'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1E0B2B',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#a855f7',
+                            borderWidth: 1,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Acessos/Min',
+                                color: 'rgb(156, 163, 175)'
+                            },
+                            ticks: { color: 'rgb(156, 163, 175)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Horário de Brasília (Min:Seg)', // Rótulo do eixo X atualizado
+                                color: 'rgb(156, 163, 175)'
+                            },
+                            ticks: { color: 'rgb(156, 163, 175)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Simulação de Chamada à IA Gemini API (Relatórios) ---
+
+        // Substitua esta função para a chamada real da API
+        async function chamarAPI_Gemini(tipoRelatorio) {
+            // Simulação de delay para dar tempo do loading
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const dadosAtuais = `Métricas: Acessos Total=${mockData.dashboard.acessos}, Faturamento=${mockData.dashboard.faturamento}, Jogos Inseridos=${mockData.dashboard.jogos}. Risco de servidor: ${mockData.dashboard.riscos[0].prob}. Retenção: ${mockData.insights.retencao}.`;
+
+            if (tipoRelatorio === 'status') {
+                return `**Relatório de Status Executivo (IA Generativa)**\n\nCom base nos dados (${dadosAtuais}), a plataforma GameX demonstra um crescimento de faturamento robusto, embora o risco de instabilidade no servidor (${mockData.dashboard.riscos[0].prob}) exija atenção. A retenção está em um nível satisfatório de ${mockData.insights.retencao}. Recomenda-se a continuidade do monitoramento proativo para mitigar riscos operacionais.\n\n*Gerado por IA em ${new Date().toLocaleDateString('pt-BR')}*`;
+            } else if (tipoRelatorio === 'licoes') {
+                return `**Lições Aprendidas e Ações Corretivas (IA Generativa)**\n\n1. **Risco de Servidor:** A lição aprendida é que a escalabilidade precisa de revisão. Ação: Alocar recursos para um plano de contingência robusto.\n2. **Baixa Conversão:** Lição: O funil de vendas não está otimizado. Ação: Implementar A/B testing na página de compra e no checkout.\n3. **Tendências:** O foco em jogos indie retrô mostrou ser um sucesso. Ação: Aumentar o investimento na curadoria deste nicho.\n\n*Análise de Lições em ${new Date().toLocaleDateString('pt-BR')}*`;
+            }
+            return "Erro ao gerar relatório.";
+        }
+
+        async function gerarRelatorio(tipo) {
+            const outputElement = tipo === 'status' ? document.getElementById('textoRelatorioStatus') : document.getElementById('textoRelatorioLicoes');
+            
+            // Define o estado de carregamento
+            outputElement.innerHTML = `<i class="fas fa-spinner fa-spin mr-2 text-accent-light"></i> Gerando relatório... Por favor, aguarde.`;
+            outputElement.classList.add('flex', 'flex-col', 'items-center', 'justify-center');
+
+            try {
+                const resultado = await chamarAPI_Gemini(tipo); // Substitua pela chamada real à API
+                outputElement.textContent = resultado;
+            } catch (error) {
+                console.error("Erro na geração do relatório:", error);
+                outputElement.textContent = "Erro ao conectar com a IA Generativa.";
+                outputElement.classList.remove('text-gray-200');
+                outputElement.classList.add('text-metric-danger');
+            } finally {
+                // Remove o estado de carregamento
+                outputElement.classList.remove('flex', 'flex-col', 'items-center', 'justify-center');
+            }
+        }
+    </script>
 </body>
 </html>

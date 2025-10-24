@@ -1,6 +1,8 @@
 // Variável global para armazenar as instâncias dos gráficos
-let graficoMundoRealInstance = null; // 🌟 NOVO: Para o gráfico de Acessos/Faturamento/Jogos
+let graficoMundoRealInstance = null;
 let graficoMonitoramentoInstance = null;
+let monitoramentoInterval = null; // Variável para controlar a atualização automática dos KPIs (10s)
+let relogioInterval = null; // Variável para controlar a atualização do relógio (1s)
 
 // Adiciona o event listener para o botão de toggle do menu (mobile)
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /**
- * 🌟 ATUALIZADO: Cria um gráfico de LINHAS comparando as 3 principais métricas.
+ * Cria um gráfico de LINHAS comparando as 3 principais métricas.
  * @param {number} acessos
  * @param {number} faturamento
  * @param {number} jogos
@@ -48,7 +50,6 @@ function criarGraficoDashboardMundoReal(acessos, faturamento, jogos) {
         datasets: [{
             label: 'Volume de Métricas',
             data: [valorAcessos, valorFaturamento, valorJogos],
-            // 🌟 AJUSTES PARA LINHA 🌟
             borderColor: '#ff00ff', // Cor principal da linha
             backgroundColor: 'rgba(255, 0, 255, 0.4)', // Cor de preenchimento abaixo da linha
             pointBackgroundColor: '#ff00ff',
@@ -60,7 +61,7 @@ function criarGraficoDashboardMundoReal(acessos, faturamento, jogos) {
     };
 
     graficoMundoRealInstance = new Chart(ctx, {
-        type: 'line', // 🌟 TIPO MUDADO PARA LINHA 🌟
+        type: 'line',
         data: dadosMundoReal,
         options: {
             responsive: true,
@@ -73,6 +74,11 @@ function criarGraficoDashboardMundoReal(acessos, faturamento, jogos) {
                     color: 'white'
                 },
                 tooltip: {
+                    backgroundColor: 'rgba(35, 11, 66, 0.9)', 
+                    titleColor: '#ff00ff',
+                    bodyColor: 'white',
+                    borderColor: '#4b1664',
+                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
                             let label = context.dataset.label || '';
@@ -132,43 +138,31 @@ async function carregarDashboard() {
     } catch (e) {
         console.warn("API de dashboard indisponível. Usando dados mockados.");
         
-        // Dados Mockados para o cálculo e exibição:
-        acessosTotal = 120000;
-        faturamentoTotal = 450000.75;
-        jogosInseridos = 350;
+        // 📈 DADOS PRINCIPAIS AUMENTADOS PARA ATIVAR OS MELHORES INSIGHTS
+        acessosTotal = 150000;
+        faturamentoTotal = 550000.75; // Alto faturamento para gerar bons Insights
+        jogosInseridos = 400;
 
-        document.getElementById("acessos").textContent = '120.000';
-        document.getElementById("faturamento").textContent = `R$ 450.000,75`;
-        document.getElementById("jogos").textContent = '350';
+        document.getElementById("acessos").textContent = '150.000';
+        document.getElementById("faturamento").textContent = `R$ 550.000,75`;
+        document.getElementById("jogos").textContent = '400';
     }
 
-
-    // 2. Cria o NOVO Gráfico de Métricas (Acessos/Faturamento/Jogos)
-    // Passa os valores coletados/mockados
+    // 2. Cria o Gráfico de Métricas (Acessos/Faturamento/Jogos)
     criarGraficoDashboardMundoReal(acessosTotal, faturamentoTotal, jogosInseridos);
 
     // 3. Carrega a Matriz de Riscos, agora com base nas métricas
-    // Passa os valores das métricas para a matriz de riscos
     await carregarMatrizRiscos(acessosTotal, faturamentoTotal, jogosInseridos); 
     
-    
-    // (Mantido) Carrega dados simulados para Velocity, CPI, SPI (Remova se não precisar mais)
-    const velocityData = { velocity: 18, descricao: "Média das últimas 3 Sprints" };
-    const cpiData = { cpi: 1.05, descricao: "Abaixo do custo orçado" };
-    const spiData = { spi: 0.98, descricao: "Levemente atrasado" };
-
-    // Esses elementos foram removidos do HTML na sua request, mas mantidos no JS caso precise reativar
-    // if (document.getElementById("velocity")) document.getElementById("velocity").textContent = velocityData.velocity;
-    // if (document.getElementById("velocity-descricao")) document.getElementById("velocity-descricao").textContent = velocityData.descricao;
-    // if (document.getElementById("cpi")) document.getElementById("cpi").textContent = cpiData.cpi;
-    // if (document.getElementById("cpi-descricao")) document.getElementById("cpi-descricao").textContent = cpiData.descricao;
-    // if (document.getElementById("spi")) document.getElementById("spi").textContent = spiData.spi;
-    // if (document.getElementById("spi-descricao")) document.getElementById("spi-descricao").textContent = spiData.descricao;
+    // 🌟 SALVA OS DADOS PARA USO GLOBAL PELAS OUTRAS FUNÇÕES 🌟
+    window.acessosTotal = acessosTotal;
+    window.faturamentoTotal = faturamentoTotal;
+    window.jogosInseridos = jogosInseridos;
 }
 
 
 /**
- * 🌟 ALTERADO: Carrega Matriz de Riscos, agora com 1 risco dinâmico baseado nas métricas.
+ * Carrega Matriz de Riscos, agora com 1 risco dinâmico baseado nas métricas.
  * @param {number} acessos
  * @param {number} faturamento
  * @param {number} jogos
@@ -239,29 +233,94 @@ async function carregarMatrizRiscos(acessos, faturamento, jogos) {
 }
 
 
-async function carregarMonitoramento() {
-    // 1. Carrega métricas (simuladas)
+/**
+ * 🌟 NOVO: Atualiza um elemento do DOM com o horário atual de Brasília (America/Sao_Paulo).
+ */
+function atualizarRelogioBrasilia() {
+    const now = new Date();
+    
+    // Formata a data para o fuso horário de São Paulo (que é o de Brasília)
+    const options = {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZone: 'America/Sao_Paulo',
+        hour12: false // Formato 24h
+    };
+    
+    const timeString = new Intl.DateTimeFormat('pt-BR', options).format(now);
+    
+    const clockElement = document.getElementById('horarioBrasilia');
+    if (clockElement) {
+        clockElement.textContent = timeString;
+    } 
+}
+
+
+/**
+ * Carrega métricas e gráfico de Monitoramento baseados nos dados do Dashboard,
+ * adicionando flutuação para simular a dinâmica de tempo real.
+ * @param {number} acessos
+ * @param {number} faturamento
+ * @param {number} jogos
+ */
+async function carregarMonitoramento(acessos, faturamento, jogos) {
+    let usuariosOnline = 0;
+    let vendasDia = 0;
+    let novosJogos = 0;
+
+    // 🌟 NOVO: Define uma flutuação aleatória para simular o tempo real.
+    // Garante que o gráfico e os números mudem a cada 10s.
+    const fluctuation = Math.floor(Math.random() * 50) - 25; // Número entre -25 e +24
+
+    // 1. Tenta carregar métricas em tempo real da API
     try {
         const res = await fetch("http://127.0.0.1:5000/api/monitoramento");
         const d = await res.json();
-        document.getElementById("usuariosOnline").textContent = d.usuarios_online || '--';
-        document.getElementById("vendasDia").textContent = d.vendas_dia || '--';
-        document.getElementById("novosJogos").textContent = d.novos_jogos || '--';
+        
+        // Se a API funcionar, usa os dados dela (se a API estiver ok, ignore a flutuação)
+        usuariosOnline = parseInt(d.usuarios_online.replace(/\D/g, '')) || 0;
+        vendasDia = parseInt(d.vendas_dia.replace(/\D/g, '')) || 0;
+        novosJogos = parseInt(d.novos_jogos) || 0;
+
     } catch (e) {
-        console.warn("API de monitoramento indisponível. Usando dados mockados.");
-        document.getElementById("usuariosOnline").textContent = '540';
-        document.getElementById("vendasDia").textContent = '1.200';
-        document.getElementById("novosJogos").textContent = '5';
+        console.warn("API de monitoramento indisponível. Usando dados mockados baseados no Dashboard com flutuação.");
+        
+        // 📈 DADOS MOCKADOS COM FLUTUAÇÃO
+        // Base calculation: ~0.7% do total de acessos
+        let baseUsers = Math.round(acessos * 0.007) + 50;
+        
+        // Aplica a flutuação à base de usuários
+        usuariosOnline = Math.max(1, baseUsers + fluctuation);
+        
+        // Aplica uma flutuação menor para as vendas e jogos
+        vendasDia = Math.max(1, Math.round(acessos * 0.004) + Math.floor(Math.random() * 10) - 5); 
+        novosJogos = Math.max(1, Math.round(jogos * 0.05) + Math.floor(Math.random() * 3) - 1); 
     }
     
-    // 2. Configura o Gráfico de Atividade (Simulado)
+    // Atualiza o DOM
+    document.getElementById("usuariosOnline").textContent = usuariosOnline.toLocaleString('pt-BR');
+    document.getElementById("vendasDia").textContent = vendasDia.toLocaleString('pt-BR');
+    document.getElementById("novosJogos").textContent = novosJogos.toLocaleString('pt-BR');
+
+    // 2. Configura o Gráfico de Atividade (Simulado - Usuários Ativos)
     const ctx = document.getElementById("graficoMonitoramento");
     
+    // Gera dados de atividade simulada com pico próximo ao NOVO valor de usuariosOnline
+    const base = usuariosOnline - 100; // Base um pouco menor que o valor final
     const dadosAtividade = {
         labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'],
         datasets: [{
             label: 'Usuários Ativos',
-            data: [110, 125, 128, 140, 135, 150, 145], 
+            data: [
+                base - 30, 
+                base + 5, 
+                base + 10, 
+                usuariosOnline, // Pico no valor atual (que agora flutua a cada 10s)
+                base + 20, 
+                base + 40, 
+                base + 15
+            ], 
             borderColor: '#ff00ff', 
             backgroundColor: 'rgba(255, 0, 255, 0.3)',
             pointBackgroundColor: '#ff00ff',
@@ -299,36 +358,124 @@ async function carregarMonitoramento() {
 }
 
 
-async function carregarInsights() {
+/**
+ * Função que inicia o loop de atualização do Monitoramento (KPIs a cada 10s, Relógio a cada 1s).
+ */
+function carregarMonitoramentoAutomatico() {
+    // 1. Limpa o intervalo anterior, se houver
+    pararMonitoramentoAutomatico(); // Chama a função que limpa os dois intervalos
+
+    // Garantir que os dados do dashboard estejam disponíveis
+    const acessos = window.acessosTotal || 0;
+    const faturamento = window.faturamentoTotal || 0;
+    const jogos = window.jogosInseridos || 0;
+
+    // --- LOOP PRINCIPAL (MÉTRICAS) ---
+    // Recarrega o módulo de monitoramento a cada 10 segundos
+    monitoramentoInterval = setInterval(() => {
+        carregarMonitoramento(acessos, faturamento, jogos);
+        console.log("Monitoramento de KPIs atualizado automaticamente (10s).");
+    }, 10000); 
+    
+    // --- NOVO LOOP PARA O RELÓGIO (1 SEGUNDO) ---
+    relogioInterval = setInterval(() => {
+        atualizarRelogioBrasilia();
+    }, 1000); 
+    
+    // 3. Executa a primeira carga imediatamente
+    carregarMonitoramento(acessos, faturamento, jogos);
+    atualizarRelogioBrasilia(); 
+}
+
+/**
+ * Função para parar a atualização automática (KPIs e Relógio).
+ */
+function pararMonitoramentoAutomatico() {
+    if (monitoramentoInterval) {
+        clearInterval(monitoramentoInterval);
+        monitoramentoInterval = null;
+    }
+    // Para o intervalo do relógio também
+    if (relogioInterval) {
+        clearInterval(relogioInterval);
+        relogioInterval = null;
+        console.log("Atualização automática (KPIs e Relógio) parada.");
+    }
+}
+
+
+/**
+ * Carrega Insights e KPIs, formatando dados brutos da API para display (ex: 0.87 -> 87%).
+ * @param {number} acessos
+ * @param {number} faturamento
+ * @param {number} jogos
+ */
+async function carregarInsights(acessos, faturamento, jogos) {
+    let retencao = '25%';
+    let satisfacao = '4.0/5';
+    let tempoMedio = '10 min';
+    let tendencias = [
+        "Aumento de 10% no engajamento de jogos 'Puzzle' no último mês.",
+        "Taxa de retenção em declínio na região Sul do país (ação necessária).",
+        "Usuários mobile geram 60% do faturamento, mas têm tempo médio de sessão menor."
+    ];
+    
+    // 1. Tenta carregar dados da API
     try {
         const res = await fetch("http://127.0.0.1:5000/api/insights");
         const d = await res.json();
         
-        // 1. Carrega as Tendências na lista
-        const lista = document.getElementById("listaInsights");
-        lista.innerHTML = ""; 
-        d.tendencias.forEach(t => {
-            const li = document.createElement("li");
-            li.innerHTML = `<span style="margin-right: 10px; color: #ff00ff;"></span>${t}`;
-            lista.appendChild(li);
-        });
+        // Formata os valores da API antes de usá-los 
+        const retencaoNum = parseFloat(d.kpis.retencao || 0.25);
+        const satisfacaoNum = parseFloat(d.kpis.satisfacao || 0.80);
+        const tempoMedioStr = d.kpis.tempo_medio_sessao || '10';
+
+        // 1. Retenção: Multiplica por 100 e adiciona %
+        retencao = `${Math.round(retencaoNum * 100)}%`; 
         
-        // 2. Carrega os KPIs nos novos cards
-        document.getElementById("retencao").textContent = d.kpis.retencao || '--';
-        document.getElementById("satisfacao").textContent = d.kpis.satisfacao || '--';
-        document.getElementById("tempoMedio").textContent = d.kpis.tempo_medio_sessao || '--';
+        // 2. Satisfação: Assumindo que 1.0 é 5/5, transforma a escala para 'X.X/5'
+        satisfacao = `${(satisfacaoNum * 5).toFixed(1)}/5`; 
+        
+        // 3. Tempo Médio: Garante que ' min' esteja presente
+        tempoMedio = tempoMedioStr.toString().includes('min') ? tempoMedioStr : `${tempoMedioStr} min`;
+
+        tendencias = d.tendencias || tendencias;
+
     } catch (e) {
-        console.warn("API de insights indisponível. Usando dados mockados.");
-        // Mock se a API falhar
-        document.getElementById("retencao").textContent = '35%';
-        document.getElementById("satisfacao").textContent = '4.5/5';
-        document.getElementById("tempoMedio").textContent = '12 min';
+        console.warn("API de insights indisponível. Usando dados mockados coerentes e otimistas.");
         
-        const lista = document.getElementById("listaInsights");
-        lista.innerHTML = `<li><span style="margin-right: 10px; color: #ff00ff;">✨</span>Aumento de 20% em jogos indie na última semana.</li>
-                            <li><span style="margin-right: 10px; color: #ff00ff;">✨</span>Região Sul com maior taxa de churn (ação necessária).</li>
-                            <li><span style="margin-right: 10px; color: #ff00ff;">✨</span>Engajamento mobile superou o desktop em 15%.</li>`;
+        // 📈 DADOS MOCKADOS OTIMISTAS
+        if (faturamento > 400000) {
+            retencao = '65%'; 
+            satisfacao = '5.0/5'; 
+            tempoMedio = '25 min'; 
+            tendencias.unshift("Taxa de retenção recorde! A comunidade está extremamente engajada e fiel à plataforma.");
+            tendencias.push("O tempo de sessão está 20% acima da média do mercado, indicando alto valor de conteúdo.");
+        } else if (faturamento < 300000) {
+            retencao = '15%';
+            satisfacao = '3.5/5';
+            tempoMedio = '8 min';
+            tendencias.unshift("Queda na Retenção: O onboarding de novos usuários precisa ser revisto.");
+        } else {
+            retencao = '35%';
+            satisfacao = '4.5/5';
+            tempoMedio = '15 min';
+        }
     }
+
+    // 2. Carrega os KPIs nos cards
+    document.getElementById("retencao").textContent = retencao;
+    document.getElementById("satisfacao").textContent = satisfacao;
+    document.getElementById("tempoMedio").textContent = tempoMedio;
+    
+    // 3. Carrega as Tendências na lista (AGORA COM ÍCONE)
+    const lista = document.getElementById("listaInsights");
+    lista.innerHTML = ""; 
+    tendencias.forEach(t => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span style="margin-right: 10px; color: #ff00ff;"><i class="fas fa-lightbulb"></i></span>${t}`;
+        lista.appendChild(li);
+    });
 }
 
 
@@ -359,23 +506,38 @@ async function gerarRelatorio(tipo) {
     }
 }
 
-// **FUNÇÃO ATUALIZADA**
+/**
+ * Função principal que controla qual módulo está ativo e inicia/para os loops de monitoramento.
+ */
 function mostrar(modulo, clickedElement) {
-    // 1. Oculta todos os módulos e exibe o ativo
+    // 1. Para qualquer loop de monitoramento ativo antes de mudar de módulo
+    pararMonitoramentoAutomatico(); 
+
+    // 2. Oculta todos os módulos e exibe o ativo
     document.querySelectorAll(".modulo").forEach(m => m.classList.remove("ativo"));
     document.getElementById(modulo).classList.add("ativo");
 
-    // 2. Remove 'active' de todos os links e adiciona ao clicado
+    // 3. Remove 'active' de todos os links e adiciona ao clicado
     document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
     if (clickedElement) {
         clickedElement.classList.add("active");
     }
+    
+    // 4. Carrega os dados específicos
+    if (modulo === "dashboard") {
+        carregarDashboard();
+    } else {
+        // Garante que os dados globais estejam disponíveis.
+        const acessos = window.acessosTotal || 0;
+        const faturamento = window.faturamentoTotal || 0;
+        const jogos = window.jogosInseridos || 0;
 
-    // 3. Carrega os dados específicos
-    if (modulo === "dashboard") carregarDashboard();
-    if (modulo === "monitoramento") carregarMonitoramento(); 
-    if (modulo === "insights") carregarInsights();
-    // 'relatorios' não precisa de carregamento inicial
+        if (modulo === "monitoramento") {
+            carregarMonitoramentoAutomatico(); // INICIA O LOOP
+        } else if (modulo === "insights") {
+            carregarInsights(acessos, faturamento, jogos); 
+        }
+    }
 }
 
 
