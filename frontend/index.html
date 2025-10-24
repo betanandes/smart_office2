@@ -1,86 +1,181 @@
-<!-- <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameX Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <div class="sidebar">
-        <h1>🎮 GameX</h1>
-        <ul>
-            <li class="active" onclick="loadModule('dashboard')">📊 Dashboard</li>
-            <li class="active" onclick="loadModule('monitoramento')">⚡ Monitoramento</li>
-            <li class="active" onclick="loadModule('insights')">💡 Insights</li>
-            <li class="active" onclick="loadModule('relatorios')">🧠 Relatórios</li>
-        </ul>
-        <p class="footer">GameX © 2025</p>
-    </div>
-
-    <div class="main-content" id="content">
-        O conteúdo dos módulos será carregado aqui
-    </div>
-
-    <script src="js/main.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>GameX Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>GameX Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <aside class="sidebar">
-    <h2>🎮 GameX</h2>
-    <nav>
-      <a onclick="mostrar('dashboard')" class="active">📊 Dashboard</a>
-      <a onclick="mostrar('monitoramento')">⚡ Monitoramento</a>
-      <a onclick="mostrar('insights')">💡 Insights</a>
-      <a onclick="mostrar('relatorios')">🧠 Relatórios</a>
-    </nav>
-    <footer>GameX © 2025</footer>
-  </aside>
+    <aside class="sidebar">
+        <button class="menu-toggle" aria-label="Abrir Menu">☰</button> 
+        <div class="sidebar-content">
+            <h2>GameX</h2>
+            <nav>
+                <a onclick="mostrar('dashboard', this)" class="active"> Dashboard</a> 
+                <a onclick="mostrar('monitoramento', this)"> Monitoramento</a>
+                <a onclick="mostrar('insights', this)"> Insights</a>
+                <a onclick="mostrar('relatorios', this)"> Relatórios</a>
+            </nav>
+            <div class="sidebar-footer">
+              <span class="footer-line">Projeto Final</span>
+              <span class="footer-line">Gerência de Projetos 4.0</span>
+              <span class="footer-line">Análise e Desenv. de Sistemas</span>
+          </div>
+        </div>
+    </aside>
 
-  <main>
-    <section id="dashboard" class="modulo ativo">
-      <h1>📊 Dashboard</h1>
-      <div class="cards">
-        <div class="card"><h3>Acessos</h3><p id="acessos">--</p></div>
-        <div class="card"><h3>Faturamento (R$)</h3><p id="faturamento">--</p></div>
-        <div class="card"><h3>Jogos Inseridos</h3><p id="jogos">--</p></div>
-      </div>
-      <canvas id="grafico"></canvas>
-    </section>
+    <main id="main-content">
+        <section id="dashboard" class="modulo ativo">
+            <h1>📊 Dashboard de Métricas e Riscos</h1>
 
-    <section id="monitoramento" class="modulo">
-      <h1>⚡ Monitoramento em Tempo Real</h1>
-      <p>Usuários Online: <b id="usuariosOnline">--</b></p>
-      <p>Vendas do Dia: <b id="vendasDia">--</b></p>
-      <p>Novos Jogos: <b id="novosJogos">--</b></p>
-    </section>
+            <div class="dashboard-cards-grid">
+                <div class="card-metricas">
+                    <h3>Acessos Total</h3>
+                    <p id="acessos" class="valor-metrica">--</p>
+                    <span class="descricao-metrica">Desde o início da plataforma</span>
+                </div>
+                <div class="card-metricas">
+                    <h3>Faturamento (R$)</h3>
+                    <p id="faturamento" class="valor-metrica">--</p>
+                    <span class="descricao-metrica">Total acumulado</span>
+                </div>
+                <div class="card-metricas">
+                    <h3>Jogos Inseridos</h3>
+                    <p id="jogos" class="valor-metrica">--</p>
+                    <span class="descricao-metrica">Novos títulos adicionados</span>
+                </div>
+                <div class="card-metricas">
+                    <h3>Velocity (Pontos)</h3>
+                    <p id="velocity" class="valor-metrica">--</p>
+                    <span id="velocity-descricao" class="descricao-metrica">Média das últimas 3 Sprints</span>
+                </div>
+                <div class="card-metricas">
+                    <h3>CPI (Índice de Custo)</h3>
+                    <p id="cpi" class="valor-metrica">--</p>
+                    <span id="cpi-descricao" class="descricao-metrica">Custo vs. Orçamento</span>
+                </div>
+                <div class="card-metricas">
+                    <h3>SPI (Índice de Prazo)</h3>
+                    <p id="spi" class="valor-metrica">--</p>
+                    <span id="spi-descricao" class="descricao-metrica">Progresso vs. Cronograma</span>
+                </div>
+            </div>
 
-    <section id="insights" class="modulo">
-      <h1>💡 Insights e Tendências</h1>
-      <ul id="listaInsights"></ul>
-      <h3>KPIs</h3>
-      <p>Retenção: <span id="retencao"></span></p>
-      <p>Satisfação: <span id="satisfacao"></span></p>
-      <p>Tempo Médio: <span id="tempoMedio"></span></p>
-    </section>
+            <div class="dashboard-grid-inferior">
 
-    <section id="relatorios" class="modulo">
-      <h1>🧠 Relatórios Inteligentes com IA</h1>
-      <button onclick="gerarRelatorio()">Gerar Relatório</button>
-      <pre id="textoRelatorio"></pre>
-    </section>
-  </main>
+                <div class="bloco-grafico">
+                    <h2>Gráfico de Burndown da Sprint Atual</h2>
+                    <div class="grafico-dashboard-container">
+                        <canvas id="graficoBurndown"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bloco-riscos">
+                    <h2>Matriz de Riscos Operacionais</h2>
+                    <div class="tabela-riscos-container">
+                        <table class="tabela-riscos">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Risco</th>
+                                    <th>Probabilidade</th>
+                                    <th>Impacto</th>
+                                    <th>Ação de Mitigação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaRiscosBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
 
-  <script src="script.js"></script>
+            </div>
+
+        </section>
+
+
+        <section id="monitoramento" class="modulo">
+            <h1>⚡ Monitoramento em Tempo Real</h1>
+            <div class="monitoramento-container">
+                <div class="grafico-card">
+                    <h2>Atividade da Plataforma (última hora)</h2>
+                    <div class="chart-area">
+                        <canvas id="graficoMonitoramento"></canvas>
+                    </div>
+                </div>
+
+
+                <div class="metricas-card">
+                    <div class="kpi-monitoramento">
+                        <h3>Usuários Online</h3>
+                        <p id="usuariosOnline" class="kpi-valor-m">--</p>
+                    </div>
+                    <div class="kpi-monitoramento">
+                        <h3>Vendas do Dia</h3>
+                        <p id="vendasDia" class="kpi-valor-m">--</p>
+                    </div>
+                    <div class="kpi-monitoramento">
+                        <h3>Novos Jogos</h3>
+                        <p id="novosJogos" class="kpi-valor-m">--</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="insights" class="modulo">
+            <h1>💡 Insights e Tendências</h1>
+
+
+            <div class="cards-kpi">
+                <div class="kpi-card">
+                    <h3>Retenção</h3>
+                    <p class="kpi-valor" id="retencao">--</p>
+                </div>
+                <div class="kpi-card">
+                    <h3>Satisfação</h3>
+                    <p class="kpi-valor" id="satisfacao">--</p>
+                </div>
+                <div class="kpi-card">
+                    <h3>Tempo Médio</h3>
+                    <p class="kpi-valor" id="tempoMedio">--</p>
+                </div>
+            </div>
+
+
+            <h2>Tendências Chave</h2>
+            <ul id="listaInsights" class="insights-lista"></ul>
+        </section>
+
+
+        <section id="relatorios" class="modulo">
+            <h1>🧠 Relatórios Inteligentes com IA</h1>
+
+            <div class="relatorio-cards">
+
+                <div class="relatorio-card">
+                    <h3>Gerador de Relatório de Status</h3>
+                    <p>Clique no botão para usar a IA Generativa e criar um relatório de status executivo com base nos dados atuais da GameX.</p>
+                    <button onclick="gerarRelatorio('status')">Gerar Relatório</button>
+                    <pre id="textoRelatorioStatus" class="resultado-relatorio"></pre>
+                </div>
+
+
+                <div class="relatorio-card">
+                    <h3>Gerador de Lições Aprendidas</h3>
+                    <p>Use a IA para compilar e analisar as lições aprendidas e riscos atuais para aprimorar processos futuros.</p>
+                    <button onclick="gerarRelatorio('licoes')">Gerar Lições Aprendidas</button>
+                    <pre id="textoRelatorioLicoes" class="resultado-relatorio"></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <script src="script.js"></script>
 </body>
 </html>
