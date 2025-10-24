@@ -90,6 +90,7 @@ body {
     /* Outros estilos de fonte, se necessário */
     font-size: 0.8rem; /* Exemplo: um pouco menor que o padrão */
     opacity: 0.7; /* Exemplo: deixa o texto ligeiramente mais discreto */
+    margin-top: 330px;
 }
 
 
@@ -101,8 +102,8 @@ main {
     /* flex: 1; */
     padding: 2rem;
     overflow-y: auto; /* Adiciona scroll se o conteúdo for longo */
-    margin-left: 260px;
-    width: calc(100% - 260px);
+    margin-left: 280px;
+    width: calc(100% - 280px);
     min-width: 100vh;
 }
 
@@ -204,46 +205,99 @@ h2 {
     gap: 2rem;
     margin-top: 2rem;
     margin-bottom: 2rem;
-    align-items: start; /* Alinha os blocos pelo topo */
+    align-items: flex-start; /* 🌟 MUDANÇA CRÍTICA: Alinha pelo topo e permite alturas independentes 🌟 */
 }
 
-/* Garante que os títulos de H2 fiquem dentro dos novos blocos e sejam formatados corretamente */
+/* Estilo base para os blocos de conteúdo na parte inferior */
+.bloco-grafico, .bloco-riscos {
+    background: var(--cor-card-fundo);
+    border-radius: 15px;
+    padding: 1.5rem; /* Adiciona padding para o conteúdo DENTRO do card */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex; 
+    flex-direction: column;
+    height: 100%; /* Garante que o flex item ocupe a altura disponível */
+}
+
+/* Títulos H2 dentro dos blocos inferiores */
 .bloco-grafico h2, .bloco-riscos h2 {
     margin-top: 0; 
+    margin-bottom: 1rem; /* Espaço abaixo do título */
+    font-size: 1.4rem; /* Um pouco menor para melhor enquadramento */
+    color: var(--cor-texto-principal); /* Garante visibilidade */
+    border-bottom: 1px solid rgba(255, 0, 255, 0.2); /* Linha sutil abaixo do título */
+    padding-bottom: 0.8rem;
 }
 
-/* Garante que o container do gráfico e da tabela ocupem 100% da sua coluna */
-.bloco-grafico, .bloco-riscos {
-    width: 100%;
-}
 
-
-/* Ajuste a altura mínima do gráfico para caber na proporção */
+/* Container do Gráfico */
 .grafico-dashboard-container {
-    min-height: 300px; /* Reduzido de 400px para ser mais compacto */
-    margin-bottom: 0; /* Remove margem extra */
+    flex-grow: 1; /* Permite que o container do gráfico ocupe o espaço restante */
+    min-height: 250px; /* 🌟 MUDANÇA: Altura mínima um pouco menor para linhas 🌟 */
+    display: flex; /* Para centralizar o canvas se ele for menor */
+    justify-content: center;
+    align-items: center;
 }
 
-/* Ajuste o padding do container de riscos para melhor alinhamento */
+/* 🌟 NOVO: Limita a altura do canvas para evitar esticamento excessivo 🌟 */
+.grafico-dashboard-container canvas {
+    max-height: 350px; /* Altura máxima para o canvas */
+    width: 100% !important;
+    height: auto !important; /* Permite que a altura se ajuste automaticamente */
+}
+
+
+/* ---------------------------------- */
+/* 📝 Tabela de Riscos                 */
+/* ---------------------------------- */
+
 .tabela-riscos-container {
-    padding: 1.5rem;
+    flex-grow: 1; /* Permite que o container da tabela ocupe o espaço restante */
+    overflow-x: auto; /* Mantém o scroll horizontal para a tabela em telas pequenas */
+    /* 🌟 NOVO: Adiciona scroll vertical se a tabela for muito grande 🌟 */
+    overflow-y: auto; 
+    max-height: 400px; /* 🌟 MUDANÇA: Limita a altura da tabela para caber no card 🌟 */
 }
 
+.tabela-riscos {
+    width: 100%;
+    border-collapse: collapse; 
+    color: var(--cor-texto-principal);
+    font-size: 0.9rem;
+    min-width: 450px; /* Garante que a tabela não fique espremida demais horizontalmente */
+}
+
+.tabela-riscos th, .tabela-riscos td {
+    padding: 0.7rem 0.5rem; /* 🌟 MUDANÇA: Padding um pouco menor para caber mais conteúdo 🌟 */
+    text-align: left;
+    border-bottom: 1px solid var(--cor-sidebar); 
+}
+
+.tabela-riscos th {
+    color: var(--cor-hover-link);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7em; /* 🌟 MUDANÇA: Tamanho da fonte menor para os cabeçalhos 🌟 */
+}
 
 /* ---------------------------------- */
 /* 📱 RESPONSIVIDADE (Ajuste para Mobile) */
 /* ---------------------------------- */
 
 @media (max-width: 900px) {
-    /* Faz o gráfico e a tabela empilharem em telas menores */
     .dashboard-grid-inferior {
         grid-template-columns: 1fr; 
         gap: 1.5rem;
     }
-
-    /* Adiciona margem inferior aos blocos para separação ao empilhar */
-    .bloco-grafico {
-        margin-bottom: 1rem;
+    .bloco-grafico, .bloco-riscos {
+        padding: 1rem; /* Padding menor em mobile */
+    }
+    .bloco-grafico h2, .bloco-riscos h2 {
+        font-size: 1.2rem;
+    }
+    .tabela-riscos th, .tabela-riscos td {
+        padding: 0.5rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -581,4 +635,29 @@ button:hover {
     .sidebar h2 {
         order: 1;
     }
+}
+
+/* ---------------------------------- */
+/* 🌟 NOVO: ESTILO DA BARRA DE SCROLL 🌟 */
+/* ---------------------------------- */
+
+/* Para navegadores Webkit (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+    width: 8px; /* Largura da barra de rolagem vertical */
+    height: 8px; /* Altura da barra de rolagem horizontal */
+}
+
+::-webkit-scrollbar-track {
+    background: var(--cor-card-fundo); /* Fundo da trilha da barra de rolagem */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--cor-hover-link); /* Cor da "alça" da barra de rolagem */
+    border-radius: 10px;
+    border: 2px solid var(--cor-card-fundo); /* Borda para parecer mais "flutuante" */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--cor-destaque); /* Cor ao passar o mouse */
 }
