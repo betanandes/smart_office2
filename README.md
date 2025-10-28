@@ -2,7 +2,7 @@
 
 # 🎮 GameX Analytics Dashboard
 
-Um sistema completo de **monitoramento e análise de dados da plataforma GameX**, com foco em métricas de acessos, faturamento, inserção de jogos, geração de relatórios com **IA (Gemini)** e visualização em tempo real.
+Um sistema completo de **monitoramento e análise de dados da plataforma GameX**, com foco em métricas de acessos, faturamento, inserção de jogos, geração de relatórios com **IA** e visualização em tempo real.
 
 </div>
 
@@ -96,11 +96,11 @@ git clone https://github.com/seuusuario/gamex-analytics.git
 cd gamex-analytics/backend
 ```
 
-2️⃣ Criar o ambiente virtual (venv)
+### 2️⃣ Criar o ambiente virtual (venv)
 ```bash
 python -m venv .venv
 ```
-Ativar o ambiente:
+#### Ativar o ambiente:<br>
 🪟 Windows PowerShell
 ```bash
 .venv\Scripts\Activate.ps1
@@ -109,33 +109,34 @@ Ativar o ambiente:
 ```bash
 source .venv/bin/activate
 ```
-3️⃣ Instalar as dependências
+### 3️⃣ Instalar as dependências
 ```bash
 pip install -r requirements.txt
 ```
-Se você ainda não tiver o arquivo requirements.txt, use:
+#### Se você ainda não tiver o arquivo requirements.txt, use:
 ```bash
 pip install flask flask-cors google-generativeai
 pip freeze > requirements.txt
 ```
-4️⃣ Configurar a API Key do Gemini
-Crie um arquivo .env dentro da pasta backend com:
+### 4️⃣ Configurar a API Key do Gemini
+
+#### Crie um arquivo .env dentro da pasta backend com:
 ```bash
 GEMINI_API_KEY=SUA_CHAVE_API_AQUI
 ```
-Depois, edite o app.py para ler essa variável:
+#### Depois, edite o app.py para ler essa variável:
 ```bash
 import os
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 ```
-5️⃣ Rodar o backend
+### 5️⃣ Rodar o backend
 ```bash
 python app.py
 ```
-O servidor será iniciado em:
+#### O servidor será iniciado em:
 👉 http://127.0.0.1:5000
 
-6️⃣ Rodar o frontend
+### 6️⃣ Rodar o frontend
 Abra o arquivo frontend/index.html diretamente no navegador
 ou use o Live Server (VSCode) para ter atualização em tempo real.
 
