@@ -134,6 +134,7 @@ def gerar_licoes_aprendidas():
 
 
     try:
+        
         model = genai.GenerativeModel("gemini-2.5-flash")
         response = model.generate_content(prompt)
         # Retorna a resposta no campo 'licoes'

@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos personalizados para a Sidebar e transições */
-        /* A Sidebar agora usa position: fixed em telas maiores (md:) */
+     
         .sidebar {
             transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
             min-height: 100vh;
@@ -126,7 +126,7 @@
                     <h3 class="text-lg font-semibold text-gray-300 flex items-center">
                         <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-users"></i></span> Acessos Total
                     </h3>
-                    <p id="acessos" class="valor-metrica text-5xl font-extrabold mt-3 text-accent-light">120.000</p>
+                    <p id="acessos" class="valor-metrica text-4xl font-extrabold mt-3 text-accent-light">120.000</p>
                     <span class="text-sm text-gray-400 mt-1 block">Desde o início da plataforma</span>
                 </div>
                 <!-- Card de Métrica: Faturamento -->
@@ -134,7 +134,7 @@
                     <h3 class="text-lg font-semibold text-gray-300 flex items-center">
                         <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-dollar-sign"></i></span> Faturamento (R$)
                     </h3>
-                    <p id="faturamento" class="valor-metrica text-5xl font-extrabold mt-3 text-metric-success">R$ 450.000,75</p>
+                    <p id="faturamento" class="valor-metrica text-4xl font-extrabold mt-3 text-metric-success">R$ 450.000,75</p>
                     <span class="text-sm text-gray-400 mt-1 block">Total acumulado</span>
                 </div>
                 <!-- Card de Métrica: Jogos Inseridos -->
@@ -142,7 +142,7 @@
                     <h3 class="text-lg font-semibold text-gray-300 flex items-center">
                         <span class="p-2 bg-accent/20 text-accent rounded-full mr-3"><i class="fas fa-gamepad"></i></span> Jogos Inseridos
                     </h3>
-                    <p id="jogos" class="valor-metrica text-5xl font-extrabold mt-3 text-white">350</p>
+                    <p id="jogos" class="valor-metrica text-4xl font-extrabold mt-3 text-white">550</p>
                     <span class="text-sm text-gray-400 mt-1 block">Novos títulos adicionados</span>
                 </div>
             </div>
@@ -234,7 +234,7 @@
                     <h3 class="text-lg font-semibold text-gray-300 flex items-center justify-center mb-2">
                         <i class="fas fa-redo-alt mr-2 text-accent"></i> Retenção
                     </h3>
-                    <p class="kpi-valor text-6xl font-extrabold text-accent-light" id="retencao">0.95</p>
+                    <p class="kpi-valor text-6xl font-extrabold text-accent-light" id="retencao">0.65</p>
                 </div>
                 <!-- Satisfação -->
                 <div class="p-6 bg-secondary-dark rounded-xl shadow-lg text-center border border-accent/30">
@@ -303,7 +303,7 @@
             dashboard: {
                 acessos: "120.000",
                 faturamento: "R$ 450.000,75",
-                jogos: "350",
+                jogos: "550",
                 riscos: [
                     { id: 'R-01', risco: 'Instabilidade no servidor', prob: 'Alta', impacto: 'Alto', mitigacao: 'Monitoramento proativo e planos de contingência.', classProb: 'bg-metric-danger', classImp: 'text-metric-danger' },
                     { id: 'R-02', risco: 'Baixa taxa de conversão', prob: 'Baixa', impacto: 'Médio', mitigacao: 'A/B testing e otimização de funil.', classProb: 'bg-metric-success', classImp: 'text-metric-warning' },
@@ -311,14 +311,14 @@
                 ]
             },
             monitoramento: {
-                online: "1.123",
-                vendas: "120",
-                novos: "30",
+                online: "1.500",
+                vendas: "280",
+                novos: "55",
             },
             insights: {
-                retencao: "0.95", 
+                retencao: "0.65", 
                 satisfacao: "4.86", 
-                tempoMedio: "18min", // NOVO VALOR ADICIONADO AQUI
+                tempoMedio: "18min", 
                 lista: [
                     "Jogos indie com estética retrô estão em alta.",
                     "Promoções aumentam engajamento em 35%.",
@@ -507,7 +507,7 @@
                     labels: ['Acessos (milhares)', 'Faturamento (x10k R$)', 'Jogos Inseridos'],
                     datasets: [{
                         label: 'Métricas em Escalas Comparáveis',
-                        data: [120, 45, 350], // Dados de exemplo
+                        data: [120000, 450000, 1050], // Dados de exemplo
                         backgroundColor: 'rgba(147, 51, 234, 0.4)', // Cor de fundo do preenchimento
                         borderColor: '#9333ea', // Cor da linha (accent)
                         borderWidth: 3,
